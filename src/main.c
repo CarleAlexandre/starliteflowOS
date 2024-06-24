@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "limine.h"
+#include "image.h"
 
 // Set the base revision to 2, this is recommended as this is the latest
 // base revision described by the Limine boot protocol specification.
@@ -113,11 +114,21 @@ void _start(void) {
     // Fetch the first framebuffer.
     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
-    // Note: we assume the framebuffer model is RGB with 32-bit pixels.
-    for (size_t i = 0; i < 100; i++) {
-        volatile uint32_t *fb_ptr = framebuffer->address;
-        fb_ptr[i * (framebuffer->pitch / 4) + i] = 0xffffff;
-    }
+	t_color color[32 * 32];
+	memset(color, 0xffffff, sizeof(t_color) * 32 * 32);
+	t_image img;
+	img.width = 32;
+	img.height = 32;
+	img.data = color;
+
+	t_vec2 pos;
+	pos.x = framebuffer->width;
+	pos.y = framebuffer->height;
+
+	pos.x /= 2;
+	pos.y /= 2;
+
+	drawImage(pos, &img, framebuffer);
 
     // We're done, just hang...
     hcf();
