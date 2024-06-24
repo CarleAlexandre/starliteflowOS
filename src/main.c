@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "limine.h"
 #include "image.h"
+#include "kernel.h"
 
 // Set the base revision to 2, this is recommended as this is the latest
 // base revision described by the Limine boot protocol specification.
@@ -128,9 +129,19 @@ void _start(void) {
 	pos.x /= 2;
 	pos.y /= 2;
 
-	drawImage(pos, &img, framebuffer);
 
-    // We're done, just hang...
+/*	enable_fpu();
+//	drawMandelBrot(framebuffer);
+	float tmp = 0.1;
+	float data = 2;
+	data *= tmp;
+	if (tmp > 2) {
+		memset(color, 0x00ff00, sizeof(t_color) * 32 * 32);
+	}
+	disable_fpu();
+*/	drawImage(pos, &img, framebuffer);
+
+	// We're done, just hang...
     hcf();
 }
 
