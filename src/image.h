@@ -28,10 +28,11 @@ typedef struct s_vec3 {
 	uint32_t x,y,z;
 }t_vec3;
 
-void drawImage(const t_vec2 pos, const t_image *image, struct limine_framebuffer *framebuffer);
-void writepixeltoimg(const int x, const int y, t_image *image, t_color color);
-void drawMandelBrot(struct limine_framebuffer *framebuffer);
-
+void drawImage(const t_vec2 pos, const t_image *image);
+void initFrameBuffer(struct limine_framebuffer *framebuffer);
+void clearFrameBuffer(struct limine_framebuffer *framebuffer);
+void clearBuffer(t_color color);
+void renderFrameBuffer(struct limine_framebuffer *framebuffer);
 
 #endif
 

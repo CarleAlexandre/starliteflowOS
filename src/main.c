@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include "limine.h"
 #include "image.h"
-#include "kernel.h"
 
 // Set the base revision to 2, this is recommended as this is the latest
 // base revision described by the Limine boot protocol specification.
@@ -121,6 +120,8 @@ void _start(void) {
 	img.width = 32;
 	img.height = 32;
 	img.data = color;
+	int xincr = 1;
+	int yincr = 1;
 
 	t_vec2 pos;
 	pos.x = framebuffer->width;
@@ -139,7 +140,18 @@ void _start(void) {
 		memset(color, 0x00ff00, sizeof(t_color) * 32 * 32);
 	}
 	disable_fpu();
-*/	drawImage(pos, &img, framebuffer);
+*/
+	initFrameBuffer(framebuffer);
+	bool running = true;
+	while (running) {
+		pos.x += xincr;
+		pos.y += yincr;
+		clearBuffer((t_color){.color_int = 0x000000});
+		drawImage(pos, &img);
+		renderFrameBuffer(framebuffer);
+		if (pos.x > framebuffer->width - 32 || pos.x < 2) xincr *= -1;
+		if (pos.y > framebuffer->height - 32 || pos.y < 2) yincr *= -1;
+	}
 
 	// We're done, just hang...
     hcf();
