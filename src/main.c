@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "limine.h"
 #include "image.h"
+#include "kernel.h"
 
 // Set the base revision to 2, this is recommended as this is the latest
 // base revision described by the Limine boot protocol specification.
@@ -114,22 +115,19 @@ void _start(void) {
     // Fetch the first framebuffer.
     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
 
-	t_color color[32 * 32];
-	memset(color, 0xffffff, sizeof(t_color) * 32 * 32);
+	uint32_t color[32 * 32];
 	t_image img;
 	img.width = 32;
 	img.height = 32;
 	img.data = color;
-	int xincr = 1;
-	int yincr = 1;
+	int xincr = 10;
+	int yincr = 10;
+	int paletteidx = 0;
+	const uint32_t palette[3] = { ansi_red, ansi_blue, ansi_green};
 
 	t_vec2 pos;
-	pos.x = framebuffer->width;
-	pos.y = framebuffer->height;
-
-	pos.x /= 2;
-	pos.y /= 2;
-
+	pos.x = 1;
+	pos.y = 1;
 
 /*	enable_fpu();
 //	drawMandelBrot(framebuffer);
@@ -146,11 +144,18 @@ void _start(void) {
 	while (running) {
 		pos.x += xincr;
 		pos.y += yincr;
-		clearBuffer((t_color){.color_int = 0x000000});
+		clearBuffer(ansi_black);
+		clearImage(&img, palette[paletteidx % 3]);
 		drawImage(pos, &img);
 		renderFrameBuffer(framebuffer);
-		if (pos.x > framebuffer->width - 32 || pos.x < 2) xincr *= -1;
-		if (pos.y > framebuffer->height - 32 || pos.y < 2) yincr *= -1;
+		if (pos.x > framebuffer->width - 43 || pos.x < 11) {
+			xincr *= -1;
+			paletteidx++;
+		}
+		if (pos.y > framebuffer->height - 43 || pos.y < 11) {
+			yincr *= -1;
+			paletteidx++;
+		}
 	}
 
 	// We're done, just hang...

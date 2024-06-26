@@ -1,15 +1,16 @@
 # include "image.h"
 # include "limine.h"
 # include "kernel.h"
+#include <stdint.h>
 
 static t_image buffer;
 
-void writepixeltoimg(const int x, const int y, t_image *image, t_color color) {
+void writepixeltoimg(const int x, const int y, t_image *image, uint32_t color) {
 	image->data[x + y * image->width] = color;
 }
 
 void drawImage(const t_vec2 pos, const t_image *image) {
-	volatile t_color *fb_ptr = buffer.data;
+	volatile uint32_t *fb_ptr = buffer.data;
 	for (uint32_t y = 0; y < image->height; y++) {
 		for (uint32_t x = 0; x < image->width; x++) {
 			// Note: we assume the framebuffer model is RGB with 32-bit pixels.
@@ -41,7 +42,7 @@ void drawMandelBrot(struct limine_framebuffer *framebuffer) {
 */}
 
 void initFrameBuffer(struct limine_framebuffer *framebuffer) {
-	t_color data[1920 * 1080];
+	uint32_t data[1920 * 1080];
 	buffer.width = framebuffer->width;
 	if (buffer.width > 1920) buffer.width = 1920;
 	buffer.height = framebuffer->height;
@@ -53,9 +54,16 @@ void clearFrameBuffer(struct limine_framebuffer *framebuffer) {
 	memset(framebuffer->address, 0x000000, sizeof(uint32_t) * framebuffer->height * framebuffer->width);
 }
 
-void clearBuffer(t_color color) {
-	volatile t_color *data = buffer.data;
+void clearBuffer(uint32_t color) {
+	volatile uint32_t *data = buffer.data;
 	for (uint64_t i = 0; i < buffer.width * buffer.height; i++) {
+		data[i] = color;
+	}
+}
+
+void clearImage(t_image *image, uint32_t color) {	
+	volatile uint32_t *data = image->data;
+	for (uint64_t i = 0; i < image->width * image->height; i++) {
 		data[i] = color;
 	}
 }
@@ -63,12 +71,12 @@ void clearBuffer(t_color color) {
 void renderFrameBuffer(struct limine_framebuffer *framebuffer) {
 	volatile uint32_t *fb_ptr = framebuffer->address;
 	for (uint64_t i = 0; i < buffer.width * buffer.height; i++) {
-		fb_ptr[i] = buffer.data[i].color_int;
+		fb_ptr[i] = buffer.data[i];
 	}
 	for (uint32_t y = 0; y < buffer.height; y++) {
 		for (uint32_t x = 0; x < buffer.width; x++) {
 			// Note: we assume the framebuffer model is RGB with 32-bit pixels.
-			fb_ptr[y * (framebuffer->pitch / 4) + x] = buffer.data[y * buffer.width + x].color_int;
+			fb_ptr[y * (framebuffer->pitch / 4) + x] = buffer.data[y * buffer.width + x];
 		}
 	}
 }

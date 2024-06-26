@@ -3,5 +3,5 @@ need to implement floatingpoint if not or throw FPE
 
 also need to add user input
 
-
+add color to limine (RGBA);
 
