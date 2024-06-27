@@ -90,7 +90,7 @@ int memcmp(const void *s1, const void *s2, size_t n) {
 }
 
 // Halt and catch fire function.
-static void hcf(void) {
+void hcf(void) {
     asm ("cli");
     for (;;) {
         asm ("hlt");
@@ -120,8 +120,8 @@ void _start(void) {
 	img.width = 32;
 	img.height = 32;
 	img.data = color;
-	int xincr = 10;
-	int yincr = 10;
+	int xincr = 4;
+	int yincr = 4;
 	int paletteidx = 0;
 	const uint32_t palette[3] = { ansi_red, ansi_blue, ansi_green};
 
@@ -148,11 +148,11 @@ void _start(void) {
 		clearImage(&img, palette[paletteidx % 3]);
 		drawImage(pos, &img);
 		renderFrameBuffer(framebuffer);
-		if (pos.x > framebuffer->width - 43 || pos.x < 11) {
+		if (pos.x > framebuffer->width - 36 || pos.x < 4) {
 			xincr *= -1;
 			paletteidx++;
 		}
-		if (pos.y > framebuffer->height - 43 || pos.y < 11) {
+		if (pos.y > framebuffer->height - 36 || pos.y < 4) {
 			yincr *= -1;
 			paletteidx++;
 		}

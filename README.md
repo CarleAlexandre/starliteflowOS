@@ -5,3 +5,6 @@ also need to add user input
 
 add color to limine (RGBA);
 
+load paging mod, test it, and check kernel memory space, to load correct paging
+
+

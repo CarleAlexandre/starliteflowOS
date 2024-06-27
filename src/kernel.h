@@ -30,6 +30,7 @@ void *memmove(void *dest, const void *src, size_t n);
 int memcmp(const void *s1, const void *s2, size_t n);
 void *memcpy(void *dest, const void *src, size_t n);
 void *memset(void *s, int c, size_t n);
+void hcf(void);
 
 typedef enum {
 	ansi_black = 0x00000000, // black
@@ -40,7 +41,7 @@ typedef enum {
     ansi_magenta = 0x00aa00aa, // magenta
     ansi_cyan = 0x0000aaaa, // cyan
     ansi_gray = 0x00aaaaaa,
-} ansi_color_e;
+} ansi_colore;
 
 #endif
 
